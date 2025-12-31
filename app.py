@@ -1,32 +1,54 @@
-
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# Saita sunan manhajar
-st.set_page_config(page_title="Dan Kaab AI Plant Doctor")
-st.title("🌱 Dan Kaab AI Plant Doctor")
-st.write("Specialist AI tool by **Dan Kaab Data Services**")
+# Saita fasalin shafin manhajarka
+st.set_page_config(page_title="Dan Kaab AI Plant Doctor", page_icon="🌱")
 
-# Lambobin API dinka
+# Sunan manhaja da bayanan Dan Kaab Data Services
+st.title("🌱 Dan Kaab AI Plant Doctor")
+st.write("Wannan manhaja tana amfani da Artificial Intelligence (AI) domin gano matsalolin shuka.")
+st.info("Developed by: **Dan Kaab Data Services**")
+
+# Saka lambobin API Key ɗinka
 API_KEY = "AIzaSyB__fefzf86ArcRLMyNsYKltVucdeSEi6I" 
 genai.configure(api_key=API_KEY)
 
-file = st.file_uploader("Upload a photo of a plant leaf", type=["jpg", "png", "jpeg"])
+# Wurin ɗora hoto
+file = st.file_uploader("Upload a photo of a plant leaf (Ɗora hoton ganyen shuka)", type=["jpg", "png", "jpeg"])
 
 if file:
+    # Nuna hoton da aka ɗora
     img = Image.open(file)
-    st.image(img, caption="Uploaded Image", use_column_width=True)
+    st.image(img, caption="Hoton da ka ɗora", use_column_width=True)
     
-    # Sashin AI
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    prompt = "Analyze this plant image. 1. Identify the plant. 2. Diagnose any disease or health issue. 3. Provide a step-by-step solution. Answer in English clearly."
+    # Sashin AI (Mun gyara sunan model ɗin zuwa flash-latest)
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
     
-    with st.spinner('Dan Kaab AI is analyzing the leaf... Please wait'):
+    # Umarnin da za a ba AI
+    prompt = """
+    Look at this plant image carefully. 
+    1. Identify the name of the plant.
+    2. Check if the plant has any disease or nutritional deficiency.
+    3. Provide a clear solution or treatment in English.
+    Please be professional and concise.
+    """
+    
+    with st.spinner('Dan Kaab AI yana binciken hoton... Dakata kaɗan'):
         try:
+            # Karatun hoto daga AI
             response = model.generate_content([prompt, img])
-            st.success("Analysis Complete!")
-            st.subheader("Diagnostic Results:")
+            
+            # Nuna sakamako
+            st.success("An kammala bincike!")
+            st.subheader("Diagnostic Results (Sakamakon Bincike):")
             st.write(response.text)
+            
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            # Idan an samu matsala
+            st.error(f"An samu matsala: {e}")
+            st.warning("Tabbatar cewa API Key ɗinka yana aiki kuma intanet ɗinka tana da ƙarfi.")
+
+# Bayani na ƙasa
+st.divider()
+st.caption("© 2025 Dan Kaab Data Services | Bebeji, Kano State.")
