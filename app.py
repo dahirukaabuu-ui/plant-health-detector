@@ -2,34 +2,40 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# Basic Setup
+# Page setup
 st.set_page_config(page_title="Dan Kaab AI Plant Doctor", page_icon="🌱")
-st.title("🌱 Dan Kaab AI Plant Doctor")
-st.write("Professional Diagnosis by **Dan Kaab Data Services**")
 
-# Using your new API Key
-API_KEY = "AIzaSyCF8IE1RrCcwzuVBLEDwFYdBckbU3TJ1zI" 
+# Branding
+st.title("🌱 Dan Kaab AI Plant Doctor")
+st.write("Expert Plant Health Diagnosis by **Dan Kaab Data Services**")
+st.info("Developed by: Dahiru Ka'abu")
+
+# API Configuration - Using your latest key
+API_KEY = "AIzaSyBc9gtcvzMa8MAkNF49YKzBIgQ8cBxIfS0" 
 genai.configure(api_key=API_KEY)
 
-file = st.file_uploader("Upload a plant leaf photo", type=["jpg", "png", "jpeg"])
+# Image Uploader
+file = st.file_uploader("Upload a photo of a plant leaf", type=["jpg", "png", "jpeg"])
 
 if file:
     img = Image.open(file)
     st.image(img, caption="Uploaded Image", use_container_width=True)
     
-    # We use a broader model call to avoid the 404/Permission error
+    # We use the stable Gemini 1.5 Flash model
     model = genai.GenerativeModel('gemini-1.5-flash')
     
-    prompt = "Analyze this plant leaf. Identify the plant and any disease in English."
+    prompt = "Identify this plant and analyze its health status. If there is a disease, provide the name and a step-by-step solution. Write everything in clear English."
     
-    with st.spinner('Analyzing...'):
+    with st.spinner('Dan Kaab AI is analyzing the leaf... Please wait.'):
         try:
+            # AI analysis
             response = model.generate_content([prompt, img])
             st.success("Analysis Complete!")
+            st.subheader("Diagnostic Results:")
             st.markdown(response.text)
         except Exception as e:
-            st.error(f"Permission Issue: {e}")
-            st.info("Check if Gemini API is enabled in your Google Cloud Console.")
+            st.error(f"Analysis Error: {e}")
+            st.warning("If the error persists, please ensure your API Key has all permissions enabled in Google Cloud.")
 
 st.divider()
 st.caption("© 2025 Dan Kaab Data Services | Bebeji, Kano State.")
