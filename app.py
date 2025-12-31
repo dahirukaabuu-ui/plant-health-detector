@@ -2,53 +2,54 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# Saita fasalin shafin manhajarka
+# Set the page configuration
 st.set_page_config(page_title="Dan Kaab AI Plant Doctor", page_icon="🌱")
 
-# Sunan manhaja da bayanan Dan Kaab Data Services
+# Header and Information
 st.title("🌱 Dan Kaab AI Plant Doctor")
-st.write("Wannan manhaja tana amfani da Artificial Intelligence (AI) domin gano matsalolin shuka.")
+st.write("This application uses Artificial Intelligence (AI) to diagnose plant health issues from photos.")
 st.info("Developed by: **Dan Kaab Data Services**")
 
-# Saka lambobin API Key ɗinka
+# Configure the API Key
 API_KEY = "AIzaSyB__fefzf86ArcRLMyNsYKltVucdeSEi6I" 
 genai.configure(api_key=API_KEY)
 
-# Wurin ɗora hoto
-file = st.file_uploader("Upload a photo of a plant leaf (Ɗora hoton ganyen shuka)", type=["jpg", "png", "jpeg"])
+# Image upload section
+file = st.file_uploader("Upload a photo of a plant leaf", type=["jpg", "png", "jpeg"])
 
 if file:
-    # Nuna hoton da aka ɗora
+    # Display the uploaded image
     img = Image.open(file)
-    st.image(img, caption="Hoton da ka ɗora", use_column_width=True)
+    st.image(img, caption="Uploaded Plant Photo", use_container_width=True)
     
-    # Sashin AI (Mun gyara sunan model ɗin zuwa flash-latest)
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    # AI Model Configuration
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
-    # Umarnin da za a ba AI
+    # Instructions for the AI
     prompt = """
-    Look at this plant image carefully. 
+    Analyze this plant image in detail.
     1. Identify the name of the plant.
-    2. Check if the plant has any disease or nutritional deficiency.
-    3. Provide a clear solution or treatment in English.
-    Please be professional and concise.
+    2. Determine if the plant is healthy or diseased.
+    3. If diseased, identify the specific disease or deficiency.
+    4. Provide a step-by-step treatment or solution.
+    Write the entire response in clear English.
     """
     
-    with st.spinner('Dan Kaab AI yana binciken hoton... Dakata kaɗan'):
+    with st.spinner('Dan Kaab AI is analyzing the image... Please wait.'):
         try:
-            # Karatun hoto daga AI
+            # Generate the content using AI
             response = model.generate_content([prompt, img])
             
-            # Nuna sakamako
-            st.success("An kammala bincike!")
-            st.subheader("Diagnostic Results (Sakamakon Bincike):")
-            st.write(response.text)
+            # Show the results
+            st.success("Analysis Complete!")
+            st.subheader("Diagnostic Results:")
+            st.markdown(response.text)
             
         except Exception as e:
-            # Idan an samu matsala
-            st.error(f"An samu matsala: {e}")
-            st.warning("Tabbatar cewa API Key ɗinka yana aiki kuma intanet ɗinka tana da ƙarfi.")
+            # Error handling
+            st.error(f"An error occurred: {e}")
+            st.info("Please ensure your requirements.txt includes: google-generativeai>=0.7.0")
 
-# Bayani na ƙasa
+# Footer
 st.divider()
 st.caption("© 2025 Dan Kaab Data Services | Bebeji, Kano State.")
